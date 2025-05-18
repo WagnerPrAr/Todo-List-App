@@ -153,6 +153,7 @@ export default function Todos() {
         sx={{
           display: 'flex',
           flexDirection: 'row',
+          flexWrap: 'wrap',
           justifyContent: 'center',
           gap: 2,
           padding: 5,
@@ -160,9 +161,10 @@ export default function Todos() {
           borderRadius: 4,
         }}
       >
-        <Typography variant="h2" sx={{ fontWeight: 'bold' }}>
+        <Typography variant="h2" sx={{ fontWeight: 'bold', width: '100%' }}>
           Add Todo
         </Typography>
+        <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
         <TextField
           fullWidth
           color="secondary"
@@ -193,6 +195,7 @@ export default function Todos() {
         >
           <AddIcon fontSize="large" />
         </Button>
+        </Box>
       </FormControl>
 
       <Box>
