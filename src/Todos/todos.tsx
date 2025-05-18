@@ -12,6 +12,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import RadioButton from '@mui/icons-material/RadioButtonUnchecked';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import EditIcon from '@mui/icons-material/Edit';
+import Modal from '@mui/material/Modal';
 import { useState, useRef } from 'react';
 
 export default function Todos() {
@@ -25,8 +26,21 @@ export default function Todos() {
   const [tittle, setTittle] = useState<string | number>('');
   const [description, setDescription] = useState<string>('');
   const [todosList, setTodosList] = useState<Itask[]>([]);
+  const [toggleModal, setToggleModal] = useState<boolean>(false);
 
   const idRef = useRef(todosList.length + 1);
+
+  const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
   function AddTask() {
     if (tittle) {
@@ -51,8 +65,76 @@ export default function Todos() {
     setTodosList(newTodosList);
   }
 
-  function EditTask(id: number) {
-    console.log(id);
+
+
+  function NewModal({todo}: {todo: Itask}) {
+    const openModal = () => setToggleModal(true);
+    const closeModal = () => {
+      setToggleModal(false);
+            setTittle('');
+      setDescription('');
+    };
+
+      function EditTask(id: number) {
+    const task = todosList.find((todo) => todo.id === id);
+    if (task) {
+      if(description && tittle){
+              const newTodo = todosList.map((todo) =>
+        todo.id === id ? { ...todo, description: description, tittle: tittle } : { ...todo },
+      );
+      setTodosList(newTodo);
+      }else{
+        console.log('Please fill at least the tittle');
+        closeModal();
+      }
+    }
+    closeModal();
+  }
+
+    return(
+      <>
+           <IconButton disabled={todo.completed} onClick={openModal}>
+                      <EditIcon
+                        color={todo.completed ? "disabled": "primary"}
+                        sx={{ height: '100%' }}
+                        fontSize="large"
+                      />
+           </IconButton>
+      <Modal open={toggleModal}
+                      onClose={closeModal}
+                      aria-labelledby="modal-modal-title"
+                      aria-describedby="modal-modal-description">
+                        <Box sx={style}>
+                          <Typography color='black' variant='h5'>Set your new task: </Typography>
+                          <Box sx={{display: 'flex', flexDirection: 'column', gap: 2, paddingY: 2}}>
+                            <TextField
+                              fullWidth
+                              color="secondary"
+                              label="Tittle"
+                              required
+                              id="tittle"
+                              value={tittle}
+                              onChange={(e) => setTittle((e.target as HTMLInputElement).value)}
+                            />
+                            <TextField
+                              fullWidth
+                              color="secondary"
+                              label="Description"
+                              variant="outlined"
+                              required
+                              id="description"
+                              value={description}
+                              onChange={(e) => setDescription((e.target as HTMLInputElement).value)}
+                            />
+                          </Box>
+                          <Box sx={{justifySelf: 'end'}}>
+                            <Button onClick={closeModal}>Cancel</Button>
+                            <Button onClick={() => EditTask(todo.id)}>Save</Button>
+                          </Box>
+                        </Box>
+                      </Modal>
+      </>
+    )
   }
 
   function ToggleComplet(id: number) {
@@ -170,13 +252,7 @@ export default function Todos() {
                         fontSize="large"
                       />
                     </IconButton>
-                    <IconButton disabled={todo.completed} onClick={() => EditTask(todo.id)}>
-                      <EditIcon
-                        color={todo.completed ? "disabled": "primary"}
-                        sx={{ height: '100%' }}
-                        fontSize="large"
-                      />
-                    </IconButton>
+                    <NewModal todo={todo}/>
                   </Box>
                 </Paper>
               ))
