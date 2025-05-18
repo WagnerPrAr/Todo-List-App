@@ -1,4 +1,11 @@
-import { TextField, Box, Typography, Button, Paper, IconButton } from '@mui/material';
+import {
+  TextField,
+  Box,
+  Typography,
+  Button,
+  Paper,
+  IconButton,
+} from '@mui/material';
 import { FormControl } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -39,23 +46,23 @@ export default function Todos() {
     }
   }
 
-  function DeletTask(id: number){
+  function DeletTask(id: number) {
     const newTodosList = todosList.filter((todo) => todo.id !== id);
     setTodosList(newTodosList);
   }
 
-  function EditTask(id: number){
-      console.log(id);
+  function EditTask(id: number) {
+    console.log(id);
   }
 
-  function ToggleComplet(id: number){
-      const task = todosList.find((todo) => todo.id === id);
-      if(task){
-        const newTodo = todosList.map((todo) => (
-          todo.id === id ? { ...todo, completed: !todo.completed } : {...todo}
-        ));
-        setTodosList(newTodo);
-      }
+  function ToggleComplet(id: number) {
+    const task = todosList.find((todo) => todo.id === id);
+    if (task) {
+      const newTodo = todosList.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : { ...todo },
+      );
+      setTodosList(newTodo);
+    }
   }
 
   return (
@@ -125,27 +132,50 @@ export default function Todos() {
                 <Paper
                   key={todo.id}
                   elevation={2}
-                  sx={{ display:'flex', paddingX: 4}}
+                  sx={{ backgroundColor: todo.completed? 'grey':'primary', display: 'flex', paddingX: 4 }}
                 >
-                  <Box sx={{alignContent:'center',  marginRight:4}}>
+                  <Box sx={{ alignContent: 'center', marginRight: 4 }}>
                     <IconButton onClick={() => ToggleComplet(todo.id)}>
-                      {todo.completed? <TaskAltIcon fontSize='medium'/>: <RadioButton fontSize='medium'/>}
+                      {todo.completed ? (
+                        <TaskAltIcon fontSize="medium" />
+                      ) : (
+                        <RadioButton fontSize="medium" />
+                      )}
                     </IconButton>
-                  </Box>
-                  
-                  <Box sx={{ textAlign: 'left', paddingY: 1, flexGrow: 1 }}>
-                  <Typography variant='h6' color='secondary' sx={{fontSize: 22, fontWeight:'bold'}}>{todo.tittle}</Typography>
-                  {todo.description ? (
-                    <Typography variant='caption' sx={{paddingX: 3, fontSize: 16}}>{todo.description}</Typography>
-                  ) : null}
                   </Box>
 
-                  <Box sx={{ display:'flex', gap:2, placeContent:'center'}}>
-                    <IconButton  onClick={() => DeletTask(todo.id)}>
-                      <DeleteOutlineIcon  color='primary' sx={{ height:'100%'}} fontSize='large'/>
+                  <Box sx={{ textAlign: 'left', paddingY: 1, flexGrow: 1}}>
+                    <Typography
+                      variant="h6"
+                      color={todo.completed?  "disabled": "secondary"}
+                      sx={{ textDecoration: todo.completed? 'line-through' : 'none', fontSize: 22, fontWeight: 'bold'}}
+                    >
+                      {todo.tittle}
+                    </Typography>
+                    {todo.description ? (
+                      <Typography
+                        variant="caption"
+                        sx={{ paddingX: 3, fontSize: 16 }}
+                      >
+                        {todo.description}
+                      </Typography>
+                    ) : null}
+                  </Box>
+
+                  <Box sx={{ display: 'flex', gap: 2, placeContent: 'center' }}>
+                    <IconButton onClick={() => DeletTask(todo.id)}>
+                      <DeleteOutlineIcon
+                        color="primary"
+                        sx={{ height: '100%' }}
+                        fontSize="large"
+                      />
                     </IconButton>
-                    <IconButton onClick={() => EditTask(todo.id)}>
-                      <EditIcon color='primary' sx={{height:'100%'}} fontSize='large'/>
+                    <IconButton disabled={todo.completed} onClick={() => EditTask(todo.id)}>
+                      <EditIcon
+                        color={todo.completed ? "disabled": "primary"}
+                        sx={{ height: '100%' }}
+                        fontSize="large"
+                      />
                     </IconButton>
                   </Box>
                 </Paper>
