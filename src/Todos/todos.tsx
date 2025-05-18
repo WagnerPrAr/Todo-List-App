@@ -24,23 +24,25 @@ export default function Todos() {
   }
 
   const [tittle, setTittle] = useState<string | number>('');
+
   const [description, setDescription] = useState<string>('');
+
   const [todosList, setTodosList] = useState<Itask[]>([]);
-  const [toggleModal, setToggleModal] = useState<boolean>(false);
+
 
   const idRef = useRef(todosList.length + 1);
 
   const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
 
   function AddTask() {
     if (tittle) {
@@ -65,76 +67,87 @@ export default function Todos() {
     setTodosList(newTodosList);
   }
 
+  function NewModal({ todo }: { todo: Itask }) {
+      const [toggleModal, setToggleModal] = useState<boolean>(false);
+        const [editDescription, setEditDescription] = useState<string>('');
+          const [editTittle, setEditTittle] = useState<string | number>('');
 
-
-  function NewModal({todo}: {todo: Itask}) {
     const openModal = () => setToggleModal(true);
     const closeModal = () => {
       setToggleModal(false);
-            setTittle('');
-      setDescription('');
     };
 
-      function EditTask(id: number) {
-    const task = todosList.find((todo) => todo.id === id);
-    if (task) {
-      if(description && tittle){
-              const newTodo = todosList.map((todo) =>
-        todo.id === id ? { ...todo, description: description, tittle: tittle } : { ...todo },
-      );
-      setTodosList(newTodo);
-      }else{
-        console.log('Please fill at least the tittle');
-        closeModal();
+    function EditTask(id: number) {
+      const task = todosList.find((todo) => todo.id === id);
+      if (task) {
+        if (editTittle) {
+          const newTodo = todosList.map((todo) =>
+            todo.id === id
+              ? { ...todo, description: editDescription, tittle: editTittle }
+              : { ...todo },
+          );
+          setTodosList(newTodo);
+        } else {
+          console.log('Please fill at least the tittle');
+          closeModal();
+        }
       }
+      closeModal();
     }
-    closeModal();
-  }
 
-    return(
+    return (
       <>
-           <IconButton disabled={todo.completed} onClick={openModal}>
-                      <EditIcon
-                        color={todo.completed ? "disabled": "primary"}
-                        sx={{ height: '100%' }}
-                        fontSize="large"
-                      />
-           </IconButton>
-      <Modal open={toggleModal}
-                      onClose={closeModal}
-                      aria-labelledby="modal-modal-title"
-                      aria-describedby="modal-modal-description">
-                        <Box sx={style}>
-                          <Typography color='black' variant='h5'>Set your new task: </Typography>
-                          <Box sx={{display: 'flex', flexDirection: 'column', gap: 2, paddingY: 2}}>
-                            <TextField
-                              fullWidth
-                              color="secondary"
-                              label="Tittle"
-                              required
-                              id="tittle"
-                              value={tittle}
-                              onChange={(e) => setTittle((e.target as HTMLInputElement).value)}
-                            />
-                            <TextField
-                              fullWidth
-                              color="secondary"
-                              label="Description"
-                              variant="outlined"
-                              required
-                              id="description"
-                              value={description}
-                              onChange={(e) => setDescription((e.target as HTMLInputElement).value)}
-                            />
-                          </Box>
-                          <Box sx={{justifySelf: 'end'}}>
-                            <Button onClick={closeModal}>Cancel</Button>
-                            <Button onClick={() => EditTask(todo.id)}>Save</Button>
-                          </Box>
-                        </Box>
-                      </Modal>
+        <IconButton disabled={todo.completed} onClick={openModal}>
+          <EditIcon
+            color={todo.completed ? 'disabled' : 'primary'}
+            sx={{ height: '100%' }}
+            fontSize="large"
+          />
+        </IconButton>
+        <Modal
+          open={toggleModal}
+          onClose={closeModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography color="black" variant="h5">
+              Set your new task:{' '}
+            </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                paddingY: 2,
+              }}
+            >
+              <TextField
+                fullWidth
+                color="secondary"
+                label="Tittle"
+                id="tittle"
+                value={editTittle}
+                onChange={(e) => setEditTittle(e.target.value)}
+              />
+              <TextField
+                fullWidth
+                color="secondary"
+                label="Description"
+                variant="outlined"
+                id="description"
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+              />
+            </Box>
+            <Box sx={{ justifySelf: 'end' }}>
+              <Button onClick={closeModal}>Cancel</Button>
+              <Button onClick={() => EditTask(todo.id)}>Save</Button>
+            </Box>
+          </Box>
+        </Modal>
       </>
-    )
+    );
   }
 
   function ToggleComplet(id: number) {
@@ -165,36 +178,36 @@ export default function Todos() {
           Add Todo
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
-        <TextField
-          fullWidth
-          color="secondary"
-          label="Tittle"
-          required
-          id="tittle"
-          value={tittle}
-          onChange={(e) => setTittle((e.target as HTMLInputElement).value)}
-        />
-        <TextField
-          fullWidth
-          color="secondary"
-          label="Description"
-          variant="outlined"
-          required
-          id="description"
-          value={description}
-          onChange={(e) => setDescription((e.target as HTMLInputElement).value)}
-        />
+          <TextField
+            fullWidth
+            color="secondary"
+            label="Tittle"
+            required
+            id="tittle"
+            value={tittle}
+            onChange={(e) => setTittle(e.target.value)}
+          />
+          <TextField
+            fullWidth
+            color="secondary"
+            label="Description"
+            variant="outlined"
+            required
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
 
-        <Button
-          onClick={() => {
-            AddTask();
-          }}
-          color="secondary"
-          aria-label="add"
-          variant="contained"
-        >
-          <AddIcon fontSize="large" />
-        </Button>
+          <Button
+            onClick={() => {
+              AddTask();
+            }}
+            color="secondary"
+            aria-label="add"
+            variant="contained"
+          >
+            <AddIcon fontSize="large" />
+          </Button>
         </Box>
       </FormControl>
 
@@ -217,7 +230,11 @@ export default function Todos() {
                 <Paper
                   key={todo.id}
                   elevation={2}
-                  sx={{ backgroundColor: todo.completed? 'grey':'primary', display: 'flex', paddingX: 4 }}
+                  sx={{
+                    backgroundColor: todo.completed ? 'grey' : 'primary',
+                    display: 'flex',
+                    paddingX: 4,
+                  }}
                 >
                   <Box sx={{ alignContent: 'center', marginRight: 4 }}>
                     <IconButton onClick={() => ToggleComplet(todo.id)}>
@@ -229,11 +246,17 @@ export default function Todos() {
                     </IconButton>
                   </Box>
 
-                  <Box sx={{ textAlign: 'left', paddingY: 1, flexGrow: 1}}>
+                  <Box sx={{ textAlign: 'left', paddingY: 1, flexGrow: 1 }}>
                     <Typography
                       variant="h6"
-                      color={todo.completed?  "disabled": "secondary"}
-                      sx={{ textDecoration: todo.completed? 'line-through' : 'none', fontSize: 22, fontWeight: 'bold'}}
+                      color={todo.completed ? 'disabled' : 'secondary'}
+                      sx={{
+                        textDecoration: todo.completed
+                          ? 'line-through'
+                          : 'none',
+                        fontSize: 22,
+                        fontWeight: 'bold',
+                      }}
                     >
                       {todo.tittle}
                     </Typography>
@@ -255,7 +278,7 @@ export default function Todos() {
                         fontSize="large"
                       />
                     </IconButton>
-                    <NewModal todo={todo}/>
+                    <NewModal todo={todo} />
                   </Box>
                 </Paper>
               ))
