@@ -1,19 +1,17 @@
 import {
   TextField,
   Box,
+  Paper,
+  FormControl,
   Typography,
   Button,
-  Paper,
   IconButton,
 } from '@mui/material';
-import { FormControl } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import RadioButton from '@mui/icons-material/RadioButtonUnchecked';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
-import EditIcon from '@mui/icons-material/Edit';
-import Modal from '@mui/material/Modal';
-import { useState, useRef } from 'react';
+import {Add, DeleteOutline, RadioButtonUnchecked, TaskAlt} from '@mui/icons-material';
+
+import { useState } from 'react';
+import {addTask, deletTask, toggleComplet} from '../utils/handleTodos';
+import NewModal from '../components/Modal';
 
 export default function Todos() {
   interface Itask {
@@ -30,135 +28,134 @@ export default function Todos() {
   const [todosList, setTodosList] = useState<Itask[]>([]);
 
 
-  const idRef = useRef(todosList.length + 1);
 
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
+  // const style = {
+  //   position: 'absolute',
+  //   top: '50%',
+  //   left: '50%',
+  //   transform: 'translate(-50%, -50%)',
+  //   width: 400,
+  //   bgcolor: 'background.paper',
+  //   border: '2px solid #000',
+  //   boxShadow: 24,
+  //   p: 4,
+  // };
 
-  function AddTask() {
-    if (tittle) {
-      setTodosList([
-        ...todosList,
-        {
-          id: idRef.current++,
-          tittle: tittle,
-          description: description,
-          completed: false,
-        },
-      ]);
-      setTittle('');
-      setDescription('');
-    } else {
-      console.log('Please fill at least the tittle');
-    }
-  }
+  // function AddTask() {
+  //   if (tittle) {
+  //     setTodosList([
+  //       ...todosList,
+  //       {
+  //         id: idRef.current++,
+  //         tittle: tittle,
+  //         description: description,
+  //         completed: false,
+  //       },
+  //     ]);
+  //     setTittle('');
+  //     setDescription('');
+  //   } else {
+  //     console.log('Please fill at least the tittle');
+  //   }
+  // }
 
-  function DeletTask(id: number) {
-    const newTodosList = todosList.filter((todo) => todo.id !== id);
-    setTodosList(newTodosList);
-  }
+  // function DeletTask(id: number) {
+  //   const newTodosList = todosList.filter((todo) => todo.id !== id);
+  //   setTodosList(newTodosList);
+  // }
 
-  function NewModal({ todo }: { todo: Itask }) {
-      const [toggleModal, setToggleModal] = useState<boolean>(false);
-        const [editDescription, setEditDescription] = useState<string>('');
-          const [editTittle, setEditTittle] = useState<string | number>('');
+  // function NewModal({ todo }: { todo: Itask }) {
+  //     const [toggleModal, setToggleModal] = useState<boolean>(false);
+  //       const [editDescription, setEditDescription] = useState<string>('');
+  //         const [editTittle, setEditTittle] = useState<string | number>('');
 
-    const openModal = () => setToggleModal(true);
-    const closeModal = () => {
-      setToggleModal(false);
-    };
+  //   const openModal = () => setToggleModal(true);
+  //   const closeModal = () => {
+  //     setToggleModal(false);
+  //   };
 
-    function EditTask(id: number) {
-      const task = todosList.find((todo) => todo.id === id);
-      if (task) {
-        if (editTittle) {
-          const newTodo = todosList.map((todo) =>
-            todo.id === id
-              ? { ...todo, description: editDescription, tittle: editTittle }
-              : { ...todo },
-          );
-          setTodosList(newTodo);
-        } else {
-          console.log('Please fill at least the tittle');
-          closeModal();
-        }
-      }
-      closeModal();
-    }
+  //   function EditTask(id: number) {
+  //     const task = todosList.find((todo) => todo.id === id);
+  //     if (task) {
+  //       if (editTittle) {
+  //         const newTodo = todosList.map((todo) =>
+  //           todo.id === id
+  //             ? { ...todo, description: editDescription, tittle: editTittle }
+  //             : { ...todo },
+  //         );
+  //         setTodosList(newTodo);
+  //       } else {
+  //         console.log('Please fill at least the tittle');
+  //         closeModal();
+  //       }
+  //     }
+  //     closeModal();
+  //   }
 
-    return (
-      <>
-        <IconButton disabled={todo.completed} onClick={openModal}>
-          <EditIcon
-            color={todo.completed ? 'disabled' : 'primary'}
-            sx={{ height: '100%' }}
-            fontSize="large"
-          />
-        </IconButton>
-        <Modal
-          open={toggleModal}
-          onClose={closeModal}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <Typography color="black" variant="h5">
-              Set your new task:{' '}
-            </Typography>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-                paddingY: 2,
-              }}
-            >
-              <TextField
-                fullWidth
-                color="secondary"
-                label="Tittle"
-                id="tittle"
-                value={editTittle}
-                onChange={(e) => setEditTittle(e.target.value)}
-              />
-              <TextField
-                fullWidth
-                color="secondary"
-                label="Description"
-                variant="outlined"
-                id="description"
-                value={editDescription}
-                onChange={(e) => setEditDescription(e.target.value)}
-              />
-            </Box>
-            <Box sx={{ justifySelf: 'end' }}>
-              <Button onClick={closeModal}>Cancel</Button>
-              <Button onClick={() => EditTask(todo.id)}>Save</Button>
-            </Box>
-          </Box>
-        </Modal>
-      </>
-    );
-  }
+  //   return (
+  //     <>
+  //       <IconButton disabled={todo.completed} onClick={openModal}>
+  //         <Edit
+  //           color={todo.completed ? 'disabled' : 'primary'}
+  //           sx={{ height: '100%' }}
+  //           fontSize="large"
+  //         />
+  //       </IconButton>
+  //       <Modal
+  //         open={toggleModal}
+  //         onClose={closeModal}
+  //         aria-labelledby="modal-modal-title"
+  //         aria-describedby="modal-modal-description"
+  //       >
+  //         <Box sx={style}>
+  //           <Typography color="black" variant="h5">
+  //             Set your new task:{' '}
+  //           </Typography>
+  //           <Box
+  //             sx={{
+  //               display: 'flex',
+  //               flexDirection: 'column',
+  //               gap: 2,
+  //               paddingY: 2,
+  //             }}
+  //           >
+  //             <TextField
+  //               fullWidth
+  //               color="secondary"
+  //               label="Tittle"
+  //               id="tittle"
+  //               value={editTittle}
+  //               onChange={(e) => setEditTittle(e.target.value)}
+  //             />
+  //             <TextField
+  //               fullWidth
+  //               color="secondary"
+  //               label="Description"
+  //               variant="outlined"
+  //               id="description"
+  //               value={editDescription}
+  //               onChange={(e) => setEditDescription(e.target.value)}
+  //             />
+  //           </Box>
+  //           <Box sx={{ justifySelf: 'end' }}>
+  //             <Button onClick={closeModal}>Cancel</Button>
+  //             <Button onClick={() => EditTask(todo.id)}>Save</Button>
+  //           </Box>
+  //         </Box>
+  //       </Modal>
+  //     </>
+  //   );
+  // }
 
-  function ToggleComplet(id: number) {
-    const task = todosList.find((todo) => todo.id === id);
-    if (task) {
-      const newTodo = todosList.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : { ...todo },
-      );
-      setTodosList(newTodo);
-    }
-  }
+  // function ToggleComplet(id: number) {
+  //   const task = todosList.find((todo) => todo.id === id);
+  //   if (task) {
+  //     const newTodo = todosList.map((todo) =>
+  //       todo.id === id ? { ...todo, completed: !todo.completed } : { ...todo },
+  //     );
+  //     setTodosList(newTodo);
+  //   }
+  // }
 
   return (
     <>
@@ -200,13 +197,13 @@ export default function Todos() {
 
           <Button
             onClick={() => {
-              AddTask();
+              addTask(tittle, description, todosList, setTodosList, setTittle, setDescription);
             }}
             color="secondary"
             aria-label="add"
             variant="contained"
           >
-            <AddIcon fontSize="large" />
+            <Add fontSize="large" />
           </Button>
         </Box>
       </FormControl>
@@ -237,11 +234,11 @@ export default function Todos() {
                   }}
                 >
                   <Box sx={{ alignContent: 'center', marginRight: 4 }}>
-                    <IconButton onClick={() => ToggleComplet(todo.id)}>
+                    <IconButton onClick={() => toggleComplet(todo.id, todosList, setTodosList)}>
                       {todo.completed ? (
-                        <TaskAltIcon fontSize="medium" />
+                        <TaskAlt fontSize="medium" />
                       ) : (
-                        <RadioButton fontSize="medium" />
+                        <RadioButtonUnchecked fontSize="medium" />
                       )}
                     </IconButton>
                   </Box>
@@ -271,14 +268,14 @@ export default function Todos() {
                   </Box>
 
                   <Box sx={{ display: 'flex', gap: 2, placeContent: 'center' }}>
-                    <IconButton onClick={() => DeletTask(todo.id)}>
-                      <DeleteOutlineIcon
+                    <IconButton onClick={() => deletTask(todo.id, todosList, setTodosList)}>
+                      <DeleteOutline
                         color="primary"
                         sx={{ height: '100%' }}
                         fontSize="large"
                       />
                     </IconButton>
-                    <NewModal todo={todo} />
+                    <NewModal todo={todo} todosList={todosList} setTodosList={setTodosList} />
                   </Box>
                 </Paper>
               ))
